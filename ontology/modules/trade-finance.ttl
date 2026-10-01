@@ -1,0 +1,113 @@
+# =============================================================================
+#  KSO Trade Finance — transactions, shipments, vessels, goods, dual-use flags.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/kso/ontology/trade-finance>
+    a owl:Ontology ;
+    dcterms:title "KSO Trade Finance"@en ;
+    owl:imports <https://w3id.org/kso/ontology/core> ;
+    owl:versionInfo "0.1.1" .
+
+kso:TradeTransaction
+    a owl:Class ;
+    rdfs:label "Trade Transaction"@en ;
+    skos:definition "A bank-intermediated trade deal (letter of credit, documentary collection, guarantee)."@en .
+
+kso:instrument
+    a owl:ObjectProperty ;
+    rdfs:domain kso:TradeTransaction ;
+    rdfs:range skos:Concept ;
+    rdfs:label "instrument"@en .
+
+kso:applicant
+    a owl:ObjectProperty ;
+    rdfs:domain kso:TradeTransaction ;
+    rdfs:range kso:Party ;
+    rdfs:label "applicant"@en .
+
+kso:beneficiary
+    a owl:ObjectProperty ;
+    rdfs:domain kso:TradeTransaction ;
+    rdfs:range kso:Party ;
+    rdfs:label "beneficiary"@en .
+
+kso:hasShipment
+    a owl:ObjectProperty ;
+    rdfs:domain kso:TradeTransaction ;
+    rdfs:range kso:Shipment ;
+    rdfs:label "has shipment"@en .
+
+kso:Shipment
+    a owl:Class ;
+    rdfs:label "Shipment"@en .
+
+kso:origin
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Shipment ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "origin"@en .
+
+kso:destination
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Shipment ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "destination"@en .
+
+kso:transshipmentVia
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Shipment ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "transshipment via"@en .
+
+kso:carriedBy
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Shipment ;
+    rdfs:range kso:Vessel ;
+    rdfs:label "carried by"@en .
+
+kso:carries
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Shipment ;
+    rdfs:range kso:Goods ;
+    rdfs:label "carries"@en .
+
+kso:Vessel
+    a owl:Class ;
+    rdfs:label "Vessel"@en .
+
+kso:imoNumber
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Vessel ;
+    rdfs:range xsd:string ;
+    rdfs:label "IMO number"@en .
+
+kso:flagState
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Vessel ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "flag state"@en .
+
+kso:Goods
+    a owl:Class ;
+    rdfs:label "Goods"@en .
+
+kso:hsCode
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Goods ;
+    rdfs:range xsd:string ;
+    rdfs:label "HS code"@en ;
+    skos:definition "Harmonized System tariff classification (at least 6 digits)."@en .
+
+kso:isDualUse
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Goods ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is dual-use"@en ;
+    skos:definition "True if the goods appear on a dual-use export-control list."@en .

@@ -1,0 +1,24 @@
+# CQ4 — Which cases are locked awaiting 2LOD BSA Compliance, who made and
+#       checked each escalation, and what triggered it?
+
+PREFIX kso:  <https://w3id.org/kso/ontology#>
+PREFIX ksov: <https://w3id.org/kso/vocab#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?case ?partyName ?trigger ?makerName ?checkerName ?escalatedOn
+WHERE {
+    ?case a kso:Case ;
+          kso:caseState ksov:BsaReviewPending ;
+          kso:isLocked true ;
+          kso:concernsProfile/kso:profileOf/kso:legalName ?partyName .
+
+    ?escalation kso:escalatedCase ?case ;
+                kso:escalationTrigger/skos:prefLabel ?trigger ;
+                kso:maker/kso:legalName ?makerName ;
+                kso:checker/kso:legalName ?checkerName ;
+                kso:escalatedOn ?escalatedOn .
+
+    # Only cases 2LOD has not yet disposed of.
+    FILTER NOT EXISTS { ?disposition kso:disposes ?escalation }
+}
+ORDER BY ?escalatedOn

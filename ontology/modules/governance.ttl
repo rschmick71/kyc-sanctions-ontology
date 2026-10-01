@@ -1,0 +1,120 @@
+# =============================================================================
+#  KSO Governance — cases, 1LOD -> 2LOD escalation, maker/checker, disposition.
+#  Mirrors docs/architecture/lines-of-defence-operating-model.md, section 4.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/kso/ontology/governance>
+    a owl:Ontology ;
+    dcterms:title "KSO Governance"@en ;
+    owl:imports <https://w3id.org/kso/ontology/core> ;
+    owl:versionInfo "0.1.1" .
+
+# -----------------------------------------------------------------------------
+#  Cases
+# -----------------------------------------------------------------------------
+
+kso:Case
+    a owl:Class ;
+    rdfs:label "Case"@en ;
+    skos:definition "A unit of 1LOD work on one customer profile, moving through defined states."@en .
+
+kso:concernsProfile
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Case ;
+    rdfs:range kso:CustomerProfile ;
+    rdfs:label "concerns profile"@en .
+
+kso:caseState
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:Case ;
+    rdfs:range skos:Concept ;
+    rdfs:label "case state"@en .
+
+kso:isLocked
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Case ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is locked"@en ;
+    skos:definition "True once a checker approves an escalation: 1LOD loses provisioning rights until 2LOD disposes."@en .
+
+# -----------------------------------------------------------------------------
+#  Escalation (dual control)
+# -----------------------------------------------------------------------------
+
+kso:Escalation
+    a owl:Class ;
+    rdfs:label "Escalation"@en ;
+    skos:definition "A locked hand-off of a case from 1LOD Operations to 2LOD BSA Compliance."@en .
+
+kso:escalatedCase
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Escalation ;
+    rdfs:range kso:Case ;
+    rdfs:label "escalated case"@en .
+
+kso:escalationTrigger
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Escalation ;
+    rdfs:range skos:Concept ;
+    rdfs:label "escalation trigger"@en .
+
+kso:maker
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Escalation ;
+    rdfs:range kso:NaturalPerson ;
+    rdfs:label "maker"@en ;
+    skos:definition "The 1LOD EDD analyst who compiled the escalation memo."@en .
+
+kso:checker
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Escalation ;
+    rdfs:range kso:NaturalPerson ;
+    rdfs:label "checker"@en ;
+    skos:definition "The 1LOD Ops manager who validated it. Must differ from the maker (enforced in SHACL)."@en .
+
+kso:escalatedOn
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Escalation ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "escalated on"@en .
+
+# -----------------------------------------------------------------------------
+#  2LOD disposition
+# -----------------------------------------------------------------------------
+
+kso:Disposition
+    a owl:Class ;
+    rdfs:label "Disposition"@en ;
+    skos:definition "The binding 2LOD BSA Compliance decision on an escalation."@en .
+
+kso:disposes
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Disposition ;
+    rdfs:range kso:Escalation ;
+    rdfs:label "disposes"@en .
+
+kso:outcome
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Disposition ;
+    rdfs:range skos:Concept ;
+    rdfs:label "outcome"@en .
+
+kso:covenant
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Disposition ;
+    rdfs:range xsd:string ;
+    rdfs:label "covenant"@en ;
+    skos:definition "An operating condition attached to a conditional approval."@en .
+
+kso:owningFunction
+    a owl:ObjectProperty ;
+    rdfs:label "owning function"@en ;
+    skos:definition "The line of defence accountable for a case, escalation or disposition."@en ;
+    rdfs:range skos:Concept .

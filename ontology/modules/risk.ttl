@@ -1,0 +1,105 @@
+# =============================================================================
+#  KSO Risk — FATF status, risk tiers, risk assessments and EDD triggers.
+#
+#  The UBO threshold hangs off the FATF-status concept, not each country.
+#  One fact, one place: change the threshold once and every jurisdiction with
+#  that status follows.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/kso/ontology/risk>
+    a owl:Ontology ;
+    dcterms:title "KSO Risk"@en ;
+    owl:imports <https://w3id.org/kso/ontology/core> ;
+    owl:versionInfo "0.1.1" .
+
+# -----------------------------------------------------------------------------
+#  Jurisdictional risk
+# -----------------------------------------------------------------------------
+
+kso:hasFatfStatus
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:Jurisdiction ;
+    rdfs:range skos:Concept ;
+    rdfs:label "has FATF status"@en .
+
+kso:hasRiskTier
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:Jurisdiction ;
+    rdfs:range skos:Concept ;
+    rdfs:label "has risk tier"@en .
+
+kso:uboThresholdPercent
+    a owl:DatatypeProperty ;
+    rdfs:domain skos:Concept ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "UBO threshold percent"@en ;
+    skos:definition "Beneficial-ownership percentage at or above which a natural person must be identified and verified."@en .
+
+kso:triggersEdd
+    a owl:DatatypeProperty ;
+    rdfs:domain skos:Concept ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "triggers EDD"@en .
+
+# -----------------------------------------------------------------------------
+#  Customer risk assessment
+# -----------------------------------------------------------------------------
+
+kso:RiskAssessment
+    a owl:Class ;
+    rdfs:label "Risk Assessment"@en ;
+    skos:definition "A dated, reproducible customer risk rating with the factors that produced it."@en .
+
+kso:assesses
+    a owl:ObjectProperty ;
+    rdfs:domain kso:RiskAssessment ;
+    rdfs:range kso:CustomerProfile ;
+    rdfs:label "assesses"@en .
+
+kso:riskRating
+    a owl:ObjectProperty ;
+    rdfs:domain kso:RiskAssessment ;
+    rdfs:range skos:Concept ;
+    rdfs:label "risk rating"@en .
+
+kso:assessedOn
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:RiskAssessment ;
+    rdfs:range xsd:date ;
+    rdfs:label "assessed on"@en .
+
+kso:eddRequired
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:RiskAssessment ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "EDD required"@en .
+
+kso:RiskFactor
+    a owl:Class ;
+    rdfs:label "Risk Factor"@en ;
+    skos:definition "One observed reason contributing to a risk rating (e.g. FATF nexus, PEP link, dual-use goods)."@en .
+
+kso:hasRiskFactor
+    a owl:ObjectProperty ;
+    rdfs:domain kso:RiskAssessment ;
+    rdfs:range kso:RiskFactor ;
+    rdfs:label "has risk factor"@en .
+
+kso:factorType
+    a owl:ObjectProperty ;
+    rdfs:domain kso:RiskFactor ;
+    rdfs:range skos:Concept ;
+    rdfs:label "factor type"@en .
+
+kso:factorSubject
+    a owl:ObjectProperty ;
+    rdfs:domain kso:RiskFactor ;
+    rdfs:label "factor subject"@en ;
+    skos:definition "The node that gave rise to the factor (a jurisdiction, a person, a shipment)."@en .

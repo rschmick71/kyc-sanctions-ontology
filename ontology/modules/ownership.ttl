@@ -1,0 +1,111 @@
+# =============================================================================
+#  KSO Ownership — stakes, control, and beneficial-ownership determinations.
+#
+#  Design note: "Ultimate Beneficial Owner" is modelled as the RESULT of an
+#  analysis (kso:BeneficialOwnerDetermination), not as a subclass of person.
+#  Nobody is a UBO in general — they are a UBO *of a specific entity*, *at a
+#  specific threshold*, *as of a specific date*. See docs/adr/0001.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/kso/ontology/ownership>
+    a owl:Ontology ;
+    dcterms:title "KSO Ownership"@en ;
+    owl:imports <https://w3id.org/kso/ontology/core> ;
+    owl:versionInfo "0.1.1" .
+
+# -----------------------------------------------------------------------------
+#  Ownership stakes (reified so the percentage can live on the relationship)
+# -----------------------------------------------------------------------------
+
+kso:OwnershipStake
+    a owl:Class ;
+    rdfs:label "Ownership Stake"@en ;
+    skos:definition "A direct equity interest one party holds in a legal entity."@en ;
+    skos:note "Reified as a class because a plain 'owns' triple cannot carry a percentage."@en .
+
+kso:holder
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:OwnershipStake ;
+    rdfs:range kso:Party ;
+    rdfs:label "holder"@en .
+
+kso:heldIn
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:OwnershipStake ;
+    rdfs:range kso:LegalEntity ;
+    rdfs:label "held in"@en .
+
+kso:percentage
+    a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:OwnershipStake ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "percentage"@en ;
+    skos:definition "Direct equity percentage, 0 < p <= 100."@en .
+
+# -----------------------------------------------------------------------------
+#  Control without ownership (FinCEN CDD "control prong")
+# -----------------------------------------------------------------------------
+
+kso:ControlRelationship
+    a owl:Class ;
+    rdfs:label "Control Relationship"@en ;
+    skos:definition "Significant managerial control over a legal entity, independent of equity (e.g. CEO, managing director)."@en .
+
+kso:controller
+    a owl:ObjectProperty ;
+    rdfs:domain kso:ControlRelationship ;
+    rdfs:range kso:NaturalPerson ;
+    rdfs:label "controller"@en .
+
+kso:controlledEntity
+    a owl:ObjectProperty ;
+    rdfs:domain kso:ControlRelationship ;
+    rdfs:range kso:LegalEntity ;
+    rdfs:label "controlled entity"@en .
+
+kso:controlBasis
+    a owl:ObjectProperty ;
+    rdfs:domain kso:ControlRelationship ;
+    rdfs:range skos:Concept ;
+    rdfs:label "control basis"@en .
+
+# -----------------------------------------------------------------------------
+#  Beneficial-ownership determination (the output of UBO traversal)
+# -----------------------------------------------------------------------------
+
+kso:BeneficialOwnerDetermination
+    a owl:Class ;
+    rdfs:label "Beneficial Owner Determination"@en ;
+    skos:definition "A recorded finding that a natural person is a beneficial owner of an entity at a given threshold."@en .
+
+kso:determinedFor
+    a owl:ObjectProperty ;
+    rdfs:domain kso:BeneficialOwnerDetermination ;
+    rdfs:range kso:LegalEntity ;
+    rdfs:label "determined for"@en .
+
+kso:beneficialOwner
+    a owl:ObjectProperty ;
+    rdfs:domain kso:BeneficialOwnerDetermination ;
+    rdfs:range kso:NaturalPerson ;
+    rdfs:label "beneficial owner"@en .
+
+kso:effectivePercentage
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:BeneficialOwnerDetermination ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "effective percentage"@en ;
+    skos:definition "Product of stake percentages along every ownership chain, summed across chains."@en .
+
+kso:appliedThreshold
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:BeneficialOwnerDetermination ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "applied threshold"@en .

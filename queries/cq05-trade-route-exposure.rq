@@ -1,0 +1,26 @@
+# CQ5 — Which trade transactions route goods through an EDD-triggering
+#       jurisdiction at any leg (origin, transshipment, destination), or
+#       carry dual-use goods?
+
+PREFIX kso:  <https://w3id.org/kso/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT DISTINCT ?transaction ?applicantName ?exposure
+WHERE {
+    ?transaction a kso:TradeTransaction ;
+                 kso:applicant/kso:legalName ?applicantName ;
+                 kso:hasShipment ?shipment .
+    {
+        ?shipment kso:origin|kso:transshipmentVia|kso:destination ?j .
+        ?j kso:hasFatfStatus/kso:triggersEdd true ;
+           skos:prefLabel ?jName .
+        BIND (CONCAT("Route touches ", STR(?jName)) AS ?exposure)
+    }
+    UNION
+    {
+        ?shipment kso:carries ?goods .
+        ?goods kso:isDualUse true ; kso:hsCode ?hs .
+        BIND (CONCAT("Dual-use goods, HS ", ?hs) AS ?exposure)
+    }
+}
+ORDER BY ?transaction ?exposure

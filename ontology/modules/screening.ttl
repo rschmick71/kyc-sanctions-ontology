@@ -1,0 +1,80 @@
+# =============================================================================
+#  KSO Screening — sanctions / PEP list screening events and alerts.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/kso/ontology/screening>
+    a owl:Ontology ;
+    dcterms:title "KSO Screening"@en ;
+    owl:imports <https://w3id.org/kso/ontology/core> ;
+    owl:versionInfo "0.1.1" .
+
+kso:WatchList
+    a owl:Class ;
+    rdfs:label "Watch List"@en ;
+    skos:definition "A published sanctions, PEP or adverse-media list a party can be screened against."@en .
+
+kso:listAuthority
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:WatchList ;
+    rdfs:range xsd:string ;
+    rdfs:label "list authority"@en .
+
+kso:ScreeningEvent
+    a owl:Class ;
+    rdfs:label "Screening Event"@en ;
+    skos:definition "One run of a party's details against one or more watch lists."@en .
+
+kso:screenedParty
+    a owl:ObjectProperty ;
+    rdfs:domain kso:ScreeningEvent ;
+    rdfs:range kso:Party ;
+    rdfs:label "screened party"@en .
+
+kso:screenedAgainst
+    a owl:ObjectProperty ;
+    rdfs:domain kso:ScreeningEvent ;
+    rdfs:range kso:WatchList ;
+    rdfs:label "screened against"@en .
+
+kso:screenedAt
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:ScreeningEvent ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "screened at"@en .
+
+kso:ScreeningAlert
+    a owl:Class ;
+    rdfs:label "Screening Alert"@en ;
+    skos:definition "A potential match produced by a screening event, awaiting or holding a disposition."@en .
+
+kso:raisedBy
+    a owl:ObjectProperty ;
+    rdfs:domain kso:ScreeningAlert ;
+    rdfs:range kso:ScreeningEvent ;
+    rdfs:label "raised by"@en .
+
+kso:matchedList
+    a owl:ObjectProperty ;
+    rdfs:domain kso:ScreeningAlert ;
+    rdfs:range kso:WatchList ;
+    rdfs:label "matched list"@en .
+
+kso:matchScore
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:ScreeningAlert ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "match score"@en ;
+    skos:definition "Fuzzy-match similarity between 0 and 1."@en .
+
+kso:alertDisposition
+    a owl:ObjectProperty ;
+    rdfs:domain kso:ScreeningAlert ;
+    rdfs:range skos:Concept ;
+    rdfs:label "alert disposition"@en .

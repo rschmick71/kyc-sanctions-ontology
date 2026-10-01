@@ -1,0 +1,166 @@
+# =============================================================================
+#  Worked example — Harbourline Commodities Ltd (ENTIRELY FICTIONAL).
+#
+#  Story: a Kenyan commodities trader, anchored on a US master profile, wants
+#  a local account in Singapore. Kenya's FATF status compresses the UBO
+#  threshold to 10%, which pulls a 12% shareholder into scope. A screening
+#  alert on the indirect owner is escalated to 2LOD under dual control.
+#
+#  Ownership:
+#       Amara Njoroge ──55%──┐
+#       Daniel Otieno ──12%──┤
+#       Tan Li Wei    ── 8%──┼──► Harbourline Commodities Ltd (KE)
+#  Tidewater Holdings FZE ─25%┘
+#       ▲
+#       └──100%── Omar Haddad            → Haddad's effective stake = 25%
+# =============================================================================
+
+@prefix kso:  <https://w3id.org/kso/ontology#> .
+@prefix ksov: <https://w3id.org/kso/vocab#> .
+@prefix ksoj: <https://w3id.org/kso/jurisdiction/> .
+@prefix ksod: <https://w3id.org/kso/local-document/> .
+@prefix ex:   <https://w3id.org/kso/example/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# -----------------------------------------------------------------------------
+#  Parties
+# -----------------------------------------------------------------------------
+
+ex:Harbourline a kso:LegalEntity ;
+    kso:legalName "Harbourline Commodities Ltd" ;
+    kso:registrationNumber "PVT-EX0001" ;
+    kso:incorporatedIn ksoj:KE ;
+    kso:operatesIn ksoj:KE , ksoj:SG , ksoj:VN .
+
+ex:Tidewater a kso:LegalEntity ;
+    kso:legalName "Tidewater Holdings FZE" ;
+    kso:incorporatedIn ksoj:AE .
+
+ex:AmaraNjoroge a kso:NaturalPerson ;
+    kso:legalName "Amara Njoroge" ;
+    kso:nationality ksoj:KE ;
+    kso:countryOfResidence ksoj:KE .
+
+ex:DanielOtieno a kso:NaturalPerson ;
+    kso:legalName "Daniel Otieno" ;
+    kso:nationality ksoj:KE .
+
+ex:TanLiWei a kso:NaturalPerson ;
+    kso:legalName "Tan Li Wei" ;
+    kso:nationality ksoj:SG .
+
+ex:OmarHaddad a kso:NaturalPerson ;
+    kso:legalName "Omar Haddad" ;
+    kso:nationality ksoj:AE .
+
+# Bank staff (maker / checker)
+ex:AnalystRivera a kso:NaturalPerson ; kso:legalName "J. Rivera (1LOD EDD Analyst)" .
+ex:ManagerOkafor a kso:NaturalPerson ; kso:legalName "C. Okafor (1LOD Ops Manager)" .
+
+# -----------------------------------------------------------------------------
+#  Ownership stakes
+# -----------------------------------------------------------------------------
+
+ex:Stake-Njoroge   a kso:OwnershipStake ; kso:holder ex:AmaraNjoroge ; kso:heldIn ex:Harbourline ; kso:percentage 55.0 .
+ex:Stake-Otieno    a kso:OwnershipStake ; kso:holder ex:DanielOtieno ; kso:heldIn ex:Harbourline ; kso:percentage 12.0 .
+ex:Stake-Tan       a kso:OwnershipStake ; kso:holder ex:TanLiWei     ; kso:heldIn ex:Harbourline ; kso:percentage 8.0 .
+ex:Stake-Tidewater a kso:OwnershipStake ; kso:holder ex:Tidewater    ; kso:heldIn ex:Harbourline ; kso:percentage 25.0 .
+ex:Stake-Haddad    a kso:OwnershipStake ; kso:holder ex:OmarHaddad   ; kso:heldIn ex:Tidewater   ; kso:percentage 100.0 .
+
+ex:Control-Njoroge a kso:ControlRelationship ;
+    kso:controller ex:AmaraNjoroge ;
+    kso:controlledEntity ex:Harbourline ;
+    kso:controlBasis ksov:SeniorManagingOfficial .
+
+# -----------------------------------------------------------------------------
+#  Profiles: US master + Singapore extension
+# -----------------------------------------------------------------------------
+
+ex:Profile-US a kso:MasterProfile ;
+    kso:profileOf ex:Harbourline ;
+    kso:bookedIn ksoj:US .
+
+ex:Profile-SG a kso:ForeignExtension ;
+    kso:profileOf ex:Harbourline ;
+    kso:bookedIn ksoj:SG ;
+    kso:extendsMaster ex:Profile-US .
+
+# Documents collected so far for the Singapore extension (one is missing).
+ex:Doc-ACRA a kso:EvidenceDocument ;
+    kso:documentType ksod:SG-AcraBizfileExtract ;
+    kso:evidences ex:Profile-SG ;
+    kso:issuedOn "2026-09-10"^^xsd:date .
+
+# -----------------------------------------------------------------------------
+#  Risk assessment
+# -----------------------------------------------------------------------------
+
+ex:Risk-2026-09 a kso:RiskAssessment ;
+    kso:assesses ex:Profile-US ;
+    kso:assessedOn "2026-09-15"^^xsd:date ;
+    kso:riskRating ksov:RiskHigh ;
+    kso:eddRequired true ;
+    kso:hasRiskFactor ex:Factor-KenyaNexus .
+
+ex:Factor-KenyaNexus a kso:RiskFactor ;
+    kso:factorType ksov:FatfNexus ;
+    kso:factorSubject ksoj:KE .
+
+# -----------------------------------------------------------------------------
+#  Screening
+# -----------------------------------------------------------------------------
+
+ex:OfacSdn a kso:WatchList ;
+    kso:listAuthority "US Treasury OFAC" .
+
+ex:Screen-Haddad a kso:ScreeningEvent ;
+    kso:screenedParty ex:OmarHaddad ;
+    kso:screenedAgainst ex:OfacSdn ;
+    kso:screenedAt "2026-09-16T09:30:00Z"^^xsd:dateTime .
+
+ex:Alert-Haddad a kso:ScreeningAlert ;
+    kso:raisedBy ex:Screen-Haddad ;
+    kso:matchedList ex:OfacSdn ;
+    kso:matchScore 0.91 ;
+    kso:alertDisposition ksov:PossibleTrueMatch .
+
+# -----------------------------------------------------------------------------
+#  Case and escalation (dual control, locked)
+# -----------------------------------------------------------------------------
+
+ex:Case-0001 a kso:Case ;
+    kso:concernsProfile ex:Profile-US ;
+    kso:caseState ksov:BsaReviewPending ;
+    kso:isLocked true ;
+    kso:owningFunction ksov:SecondLine .
+
+ex:Escalation-0001 a kso:Escalation ;
+    kso:escalatedCase ex:Case-0001 ;
+    kso:escalationTrigger ksov:SuspectedTrueMatch ;
+    kso:maker ex:AnalystRivera ;
+    kso:checker ex:ManagerOkafor ;
+    kso:escalatedOn "2026-09-17T14:05:00Z"^^xsd:dateTime .
+
+# -----------------------------------------------------------------------------
+#  Trade finance
+# -----------------------------------------------------------------------------
+
+ex:LC-0001 a kso:TradeTransaction ;
+    kso:instrument ksov:LetterOfCredit ;
+    kso:applicant ex:Harbourline ;
+    kso:hasShipment ex:Shipment-0001 .
+
+ex:Shipment-0001 a kso:Shipment ;
+    kso:origin ksoj:KE ;
+    kso:destination ksoj:VN ;
+    kso:transshipmentVia ksoj:AE ;
+    kso:carriedBy ex:Vessel-0001 ;
+    kso:carries ex:Goods-Coffee .
+
+ex:Vessel-0001 a kso:Vessel ;
+    kso:imoNumber "IMO9000001" ;
+    kso:flagState ksoj:SG .
+
+ex:Goods-Coffee a kso:Goods ;
+    kso:hsCode "090111" ;
+    kso:isDualUse false .

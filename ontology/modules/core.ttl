@@ -1,0 +1,183 @@
+# =============================================================================
+#  KSO Core — parties, jurisdictions, customer profiles, evidence documents.
+#  Every other module depends on this one; this one depends on nothing.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/kso/ontology/core>
+    a owl:Ontology ;
+    dcterms:title "KSO Core"@en ;
+    owl:versionInfo "0.1.1" .
+
+# -----------------------------------------------------------------------------
+#  Parties
+# -----------------------------------------------------------------------------
+
+kso:Party
+    a owl:Class ;
+    rdfs:label "Party"@en ;
+    skos:definition "A natural person or organisation capable of holding rights, obligations, or ownership."@en .
+
+kso:NaturalPerson
+    a owl:Class ;
+    rdfs:subClassOf kso:Party ;
+    owl:disjointWith kso:LegalEntity ;
+    rdfs:label "Natural Person"@en ;
+    skos:definition "A human being. The only kind of party that can be an ultimate beneficial owner."@en .
+
+kso:LegalEntity
+    a owl:Class ;
+    rdfs:subClassOf kso:Party ;
+    rdfs:label "Legal Entity"@en ;
+    skos:definition "An organisation with separate legal personality (company, partnership, trust, foundation)."@en .
+
+kso:FinancialInstitution
+    a owl:Class ;
+    rdfs:subClassOf kso:LegalEntity ;
+    rdfs:label "Financial Institution"@en ;
+    skos:definition "A legal entity licensed to conduct banking or payment business."@en .
+
+kso:legalName
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Party ;
+    rdfs:range xsd:string ;
+    rdfs:label "legal name"@en .
+
+kso:registrationNumber
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:LegalEntity ;
+    rdfs:range xsd:string ;
+    rdfs:label "registration number"@en ;
+    skos:definition "Identifier issued by the company registry of the incorporation jurisdiction."@en .
+
+kso:leiCode
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:LegalEntity ;
+    rdfs:range xsd:string ;
+    rdfs:label "LEI code"@en ;
+    skos:definition "ISO 17442 Legal Entity Identifier — a deterministic identifier used to clear screening false positives."@en .
+
+# -----------------------------------------------------------------------------
+#  Jurisdictions
+# -----------------------------------------------------------------------------
+
+kso:Jurisdiction
+    a owl:Class ;
+    rdfs:label "Jurisdiction"@en ;
+    skos:definition "A territory with its own legal and regulatory regime. Instances live in vocabularies/jurisdictions.ttl."@en .
+
+kso:isoCountryCode
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Jurisdiction ;
+    rdfs:range xsd:string ;
+    rdfs:label "ISO 3166-1 alpha-2 code"@en .
+
+kso:primaryRegulator
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:Jurisdiction ;
+    rdfs:range xsd:string ;
+    rdfs:label "primary regulator"@en .
+
+kso:incorporatedIn
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:LegalEntity ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "incorporated in"@en .
+
+kso:operatesIn
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Party ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "operates in"@en .
+
+kso:nationality
+    a owl:ObjectProperty ;
+    rdfs:domain kso:NaturalPerson ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "nationality"@en .
+
+kso:countryOfResidence
+    a owl:ObjectProperty ;
+    rdfs:domain kso:NaturalPerson ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "country of residence"@en .
+
+# -----------------------------------------------------------------------------
+#  Customer profiles — the "US Master + Foreign Extension" model
+# -----------------------------------------------------------------------------
+
+kso:CustomerProfile
+    a owl:Class ;
+    rdfs:label "Customer Profile"@en ;
+    skos:definition "The bank's KYC record of a party in one booking jurisdiction."@en .
+
+kso:MasterProfile
+    a owl:Class ;
+    rdfs:subClassOf kso:CustomerProfile ;
+    owl:disjointWith kso:ForeignExtension ;
+    rdfs:label "Master Profile"@en ;
+    skos:definition "The anchor KYC profile, fully verified under the home regulator (e.g. FinCEN CDD Rule, NYDFS Part 504). Must exist before any foreign extension."@en .
+
+kso:ForeignExtension
+    a owl:Class ;
+    rdfs:subClassOf kso:CustomerProfile ;
+    rdfs:label "Foreign Extension"@en ;
+    skos:definition "A local account profile abroad that reuses the master profile and adds only the supplemental documents the local regulator requires."@en .
+
+kso:profileOf
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:CustomerProfile ;
+    rdfs:range kso:Party ;
+    rdfs:label "profile of"@en .
+
+kso:bookedIn
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:CustomerProfile ;
+    rdfs:range kso:Jurisdiction ;
+    rdfs:label "booked in"@en .
+
+kso:extendsMaster
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain kso:ForeignExtension ;
+    rdfs:range kso:MasterProfile ;
+    rdfs:label "extends master"@en .
+
+# -----------------------------------------------------------------------------
+#  Evidence documents and local requirements
+# -----------------------------------------------------------------------------
+
+kso:EvidenceDocument
+    a owl:Class ;
+    rdfs:label "Evidence Document"@en ;
+    skos:definition "A document collected by 1LOD Operations as evidence for a customer profile."@en .
+
+kso:documentType
+    a owl:ObjectProperty ;
+    rdfs:domain kso:EvidenceDocument ;
+    rdfs:range skos:Concept ;
+    rdfs:label "document type"@en .
+
+kso:evidences
+    a owl:ObjectProperty ;
+    rdfs:domain kso:EvidenceDocument ;
+    rdfs:range kso:CustomerProfile ;
+    rdfs:label "evidences"@en .
+
+kso:issuedOn
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:EvidenceDocument ;
+    rdfs:range xsd:date ;
+    rdfs:label "issued on"@en .
+
+kso:requiresDocument
+    a owl:ObjectProperty ;
+    rdfs:domain kso:Jurisdiction ;
+    rdfs:range skos:Concept ;
+    rdfs:label "requires document"@en ;
+    skos:definition "A supplemental document type the jurisdiction's regulator requires beyond the master-profile baseline."@en .

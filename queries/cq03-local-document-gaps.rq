@@ -1,0 +1,24 @@
+# CQ3 — Foreign Gap Assessment: for each foreign extension, which documents
+#       does the local regulator require that 1LOD has NOT yet collected?
+#
+# This is the automated RFI from procedure step 3 of the operating model.
+# The pattern "required MINUS collected" is written with FILTER NOT EXISTS.
+
+PREFIX kso:  <https://w3id.org/kso/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?partyName ?bookedIn ?missingDocument
+WHERE {
+    ?extension a kso:ForeignExtension ;
+               kso:profileOf/kso:legalName ?partyName ;
+               kso:bookedIn ?j .
+    ?j skos:prefLabel ?bookedIn ;
+       kso:requiresDocument ?docType .
+    ?docType skos:prefLabel ?missingDocument .
+
+    FILTER NOT EXISTS {
+        ?doc kso:evidences ?extension ;
+             kso:documentType ?docType .
+    }
+}
+ORDER BY ?partyName ?missingDocument

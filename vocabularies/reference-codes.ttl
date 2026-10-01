@@ -1,0 +1,155 @@
+# =============================================================================
+#  KSO Reference Codes — controlled vocabularies (SKOS concept schemes).
+#
+#  Why SKOS and not OWL classes? A case state or a risk tier is a *value you
+#  pick from a list*, not a *kind of thing* with members. SKOS gives labels,
+#  definitions and ordering without pretending "High" is a set of objects.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix ksov:    <https://w3id.org/kso/vocab#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+# -----------------------------------------------------------------------------
+#  FATF status — carries the UBO threshold and EDD trigger
+# -----------------------------------------------------------------------------
+
+ksov:FatfStatusScheme a skos:ConceptScheme ;
+    skos:prefLabel "FATF jurisdiction status"@en .
+
+ksov:FatfStandard a skos:Concept ;
+    skos:inScheme ksov:FatfStatusScheme ;
+    skos:prefLabel "Standard"@en ;
+    skos:definition "Not subject to FATF increased monitoring or call for action."@en ;
+    kso:uboThresholdPercent "25"^^xsd:decimal ;
+    kso:triggersEdd false .
+
+ksov:FatfIncreasedMonitoring a skos:Concept ;
+    skos:inScheme ksov:FatfStatusScheme ;
+    skos:prefLabel "Increased Monitoring"@en ;
+    skos:definition "On the FATF 'grey list'. Compresses the UBO threshold and mandates EDD."@en ;
+    kso:uboThresholdPercent "10"^^xsd:decimal ;
+    kso:triggersEdd true .
+
+ksov:FatfCallForAction a skos:Concept ;
+    skos:inScheme ksov:FatfStatusScheme ;
+    skos:prefLabel "Call for Action"@en ;
+    skos:definition "On the FATF 'black list'. Outside risk appetite by default."@en ;
+    kso:uboThresholdPercent "10"^^xsd:decimal ;
+    kso:triggersEdd true .
+
+# -----------------------------------------------------------------------------
+#  Risk tiers (ordered with skos:notation for sorting)
+# -----------------------------------------------------------------------------
+
+ksov:RiskTierScheme a skos:ConceptScheme ;
+    skos:prefLabel "Risk tier"@en .
+
+ksov:RiskLow        a skos:Concept ; skos:inScheme ksov:RiskTierScheme ; skos:notation "1" ; skos:prefLabel "Low"@en .
+ksov:RiskLowMedium  a skos:Concept ; skos:inScheme ksov:RiskTierScheme ; skos:notation "2" ; skos:prefLabel "Low-Medium"@en .
+ksov:RiskMedium     a skos:Concept ; skos:inScheme ksov:RiskTierScheme ; skos:notation "3" ; skos:prefLabel "Medium"@en .
+ksov:RiskMediumHigh a skos:Concept ; skos:inScheme ksov:RiskTierScheme ; skos:notation "4" ; skos:prefLabel "Medium-High"@en .
+ksov:RiskHigh       a skos:Concept ; skos:inScheme ksov:RiskTierScheme ; skos:notation "5" ; skos:prefLabel "High"@en .
+
+# -----------------------------------------------------------------------------
+#  Risk factor types
+# -----------------------------------------------------------------------------
+
+ksov:RiskFactorScheme a skos:ConceptScheme ;
+    skos:prefLabel "Risk factor type"@en .
+
+ksov:FatfNexus      a skos:Concept ; skos:inScheme ksov:RiskFactorScheme ; skos:prefLabel "FATF high-risk jurisdiction nexus"@en .
+ksov:PepConnection  a skos:Concept ; skos:inScheme ksov:RiskFactorScheme ; skos:prefLabel "Politically exposed person connection"@en .
+ksov:DualUseGoods   a skos:Concept ; skos:inScheme ksov:RiskFactorScheme ; skos:prefLabel "Dual-use goods"@en .
+ksov:NestedAccess   a skos:Concept ; skos:inScheme ksov:RiskFactorScheme ; skos:prefLabel "Nested correspondent access"@en .
+ksov:OpaqueOwnership a skos:Concept ; skos:inScheme ksov:RiskFactorScheme ; skos:prefLabel "Opaque ownership structure"@en .
+
+# -----------------------------------------------------------------------------
+#  Case states (the FSM gates in the operating model)
+# -----------------------------------------------------------------------------
+
+ksov:CaseStateScheme a skos:ConceptScheme ;
+    skos:prefLabel "Case state"@en .
+
+ksov:IntakeInProgress      a skos:Concept ; skos:inScheme ksov:CaseStateScheme ; skos:prefLabel "Intake in progress"@en .
+ksov:EddInProgress         a skos:Concept ; skos:inScheme ksov:CaseStateScheme ; skos:prefLabel "EDD in progress"@en .
+ksov:BsaReviewPending      a skos:Concept ; skos:inScheme ksov:CaseStateScheme ; skos:prefLabel "2LOD BSA review pending"@en ; skos:notation "2LOD_BSA_Review_Pending" .
+ksov:LocalGapAssessment    a skos:Concept ; skos:inScheme ksov:CaseStateScheme ; skos:prefLabel "Local gap assessment"@en .
+ksov:Provisioned           a skos:Concept ; skos:inScheme ksov:CaseStateScheme ; skos:prefLabel "Provisioned"@en .
+ksov:Declined              a skos:Concept ; skos:inScheme ksov:CaseStateScheme ; skos:prefLabel "Declined"@en .
+
+# -----------------------------------------------------------------------------
+#  Escalation triggers and 2LOD outcomes
+# -----------------------------------------------------------------------------
+
+ksov:EscalationTriggerScheme a skos:ConceptScheme ;
+    skos:prefLabel "Escalation trigger"@en .
+
+ksov:SuspectedTrueMatch  a skos:Concept ; skos:inScheme ksov:EscalationTriggerScheme ; skos:prefLabel "Suspected true sanctions match"@en .
+ksov:UnmitigatedHighRisk a skos:Concept ; skos:inScheme ksov:EscalationTriggerScheme ; skos:prefLabel "Unmitigated high risk post-EDD"@en .
+ksov:RegulatoryConflict  a skos:Concept ; skos:inScheme ksov:EscalationTriggerScheme ; skos:prefLabel "Irreconcilable cross-border regulatory conflict"@en .
+
+ksov:DispositionOutcomeScheme a skos:ConceptScheme ;
+    skos:prefLabel "2LOD disposition outcome"@en .
+
+ksov:Decline             a skos:Concept ; skos:inScheme ksov:DispositionOutcomeScheme ; skos:prefLabel "Decline"@en .
+ksov:ConditionalApproval a skos:Concept ; skos:inScheme ksov:DispositionOutcomeScheme ; skos:prefLabel "Conditional approval"@en .
+ksov:Clearance           a skos:Concept ; skos:inScheme ksov:DispositionOutcomeScheme ; skos:prefLabel "Clearance"@en .
+
+# -----------------------------------------------------------------------------
+#  Screening alert dispositions
+# -----------------------------------------------------------------------------
+
+ksov:AlertDispositionScheme a skos:ConceptScheme ;
+    skos:prefLabel "Alert disposition"@en .
+
+ksov:AlertPending       a skos:Concept ; skos:inScheme ksov:AlertDispositionScheme ; skos:prefLabel "Pending review"@en .
+ksov:FalsePositive      a skos:Concept ; skos:inScheme ksov:AlertDispositionScheme ; skos:prefLabel "False positive"@en .
+ksov:PossibleTrueMatch  a skos:Concept ; skos:inScheme ksov:AlertDispositionScheme ; skos:prefLabel "Possible true match"@en .
+
+# -----------------------------------------------------------------------------
+#  Lines of defence
+# -----------------------------------------------------------------------------
+
+ksov:LineOfDefenceScheme a skos:ConceptScheme ;
+    skos:prefLabel "Line of defence"@en .
+
+ksov:FirstLine  a skos:Concept ; skos:inScheme ksov:LineOfDefenceScheme ; skos:prefLabel "1LOD Operations"@en .
+ksov:SecondLine a skos:Concept ; skos:inScheme ksov:LineOfDefenceScheme ; skos:prefLabel "2LOD BSA Compliance"@en .
+ksov:ThirdLine  a skos:Concept ; skos:inScheme ksov:LineOfDefenceScheme ; skos:prefLabel "3LOD Regulators"@en .
+
+# -----------------------------------------------------------------------------
+#  Trade instruments and control bases
+# -----------------------------------------------------------------------------
+
+ksov:TradeInstrumentScheme a skos:ConceptScheme ; skos:prefLabel "Trade instrument"@en .
+ksov:LetterOfCredit        a skos:Concept ; skos:inScheme ksov:TradeInstrumentScheme ; skos:prefLabel "Documentary letter of credit"@en .
+ksov:DocumentaryCollection a skos:Concept ; skos:inScheme ksov:TradeInstrumentScheme ; skos:prefLabel "Documentary collection"@en .
+ksov:BankGuarantee         a skos:Concept ; skos:inScheme ksov:TradeInstrumentScheme ; skos:prefLabel "Bank guarantee"@en .
+
+ksov:ControlBasisScheme  a skos:ConceptScheme ; skos:prefLabel "Control basis"@en .
+ksov:SeniorManagingOfficial a skos:Concept ; skos:inScheme ksov:ControlBasisScheme ; skos:prefLabel "Senior managing official"@en .
+ksov:BoardAppointmentRight  a skos:Concept ; skos:inScheme ksov:ControlBasisScheme ; skos:prefLabel "Right to appoint the board"@en .
+
+# -----------------------------------------------------------------------------
+#  Baseline (master-profile) document types
+# -----------------------------------------------------------------------------
+
+ksov:DocumentTypeScheme a skos:ConceptScheme ;
+    skos:prefLabel "Document type"@en .
+
+ksov:ArticlesOfIncorporation     a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Articles of Incorporation / Certificate of Formation"@en .
+ksov:CertificateOfGoodStanding   a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Certificate of Good Standing"@en .
+ksov:CorporateResolution         a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Corporate resolution designating signatories"@en .
+ksov:FormW9                      a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "IRS Form W-9 / EIN verification"@en .
+ksov:FinCenCddCertification      a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "FinCEN CDD beneficial ownership certification"@en .
+ksov:OwnershipChart              a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Ownership and control organisational chart"@en .
+ksov:GovernmentPhotoId           a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Government-issued photo ID"@en .
+ksov:ProofOfAddress              a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Proof of residential address"@en .
+ksov:SourceOfWealthEvidence      a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Source of wealth corroboration"@en .
+ksov:SourceOfFundsEvidence       a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Source of funds corroboration"@en .
+ksov:CustomerSupplierLists       a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Primary customer and supplier lists"@en .
+ksov:WolfsbergCbddq              a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Wolfsberg CBDDQ"@en .
+ksov:RespondentAmlPolicy         a skos:Concept ; skos:inScheme ksov:DocumentTypeScheme ; skos:prefLabel "Respondent AML policy"@en .

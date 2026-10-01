@@ -1,0 +1,30 @@
+# =============================================================================
+#  KSO — KYC & Sanctions Ontology (First Line of Defence)
+#  Entry point. Loading this file pulls in every module via owl:imports.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vann:    <http://purl.org/vocab/vann/> .
+
+<https://w3id.org/kso/ontology>
+    a owl:Ontology ;
+    dcterms:title "KSO — KYC & Sanctions Ontology"@en ;
+    dcterms:description """A modular OWL ontology for First Line of Defence (1LOD) KYC,
+beneficial-ownership, sanctions-screening and escalation workflows at a
+cross-border trade bank."""@en ;
+    dcterms:creator "Ron Schmick" ;
+    dcterms:license <https://opensource.org/licenses/MIT> ;
+    vann:preferredNamespacePrefix "kso" ;
+    vann:preferredNamespaceUri "https://w3id.org/kso/ontology#" ;
+    owl:versionInfo "0.1.1" ;
+    owl:imports
+        <https://w3id.org/kso/ontology/core> ,
+        <https://w3id.org/kso/ontology/ownership> ,
+        <https://w3id.org/kso/ontology/risk> ,
+        <https://w3id.org/kso/ontology/screening> ,
+        <https://w3id.org/kso/ontology/governance> ,
+        <https://w3id.org/kso/ontology/correspondent> ,
+        <https://w3id.org/kso/ontology/trade-finance> .

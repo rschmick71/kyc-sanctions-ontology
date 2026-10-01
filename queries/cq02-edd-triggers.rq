@@ -1,0 +1,30 @@
+# CQ2 — Which customer profiles require Enhanced Due Diligence, and why?
+#
+# Two independent routes to EDD, combined with UNION:
+#   (a) the party touches a jurisdiction whose FATF status triggers EDD
+#   (b) a risk assessment explicitly concluded EDD is required
+
+PREFIX kso:  <https://w3id.org/kso/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT DISTINCT ?partyName ?profile ?reason
+WHERE {
+    ?profile a kso:MasterProfile ;
+             kso:profileOf ?party .
+    ?party kso:legalName ?partyName .
+
+    {
+        ?party kso:incorporatedIn|kso:operatesIn ?j .
+        ?j kso:hasFatfStatus ?status ; skos:prefLabel ?jName .
+        ?status kso:triggersEdd true ; skos:prefLabel ?statusName .
+        BIND (CONCAT("FATF nexus: ", STR(?jName), " (", STR(?statusName), ")") AS ?reason)
+    }
+    UNION
+    {
+        ?assessment kso:assesses ?profile ;
+                    kso:eddRequired true ;
+                    kso:assessedOn ?date .
+        BIND (CONCAT("Risk assessment of ", STR(?date), " requires EDD") AS ?reason)
+    }
+}
+ORDER BY ?partyName ?reason

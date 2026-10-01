@@ -1,0 +1,231 @@
+# =============================================================================
+#  KSO Shapes — SHACL data-quality and policy constraints.
+#
+#  OWL describes what the world *could* look like (open world: a missing fact
+#  is merely unknown). SHACL checks what *this dataset* actually contains
+#  (closed world: a missing fact is a violation). KYC is a closed-world
+#  problem — "we don't have the UBO's ID" is a finding, not an unknown.
+#  See docs/adr/0002.
+# =============================================================================
+
+@prefix kso:  <https://w3id.org/kso/ontology#> .
+@prefix ksos: <https://w3id.org/kso/shapes#> .
+@prefix ksov: <https://w3id.org/kso/vocab#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# SHACL-SPARQL constraints need the prefixes declared as data.
+ksos:Prefixes
+    sh:declare [ sh:prefix "kso" ; sh:namespace "https://w3id.org/kso/ontology#"^^xsd:anyURI ] .
+
+# -----------------------------------------------------------------------------
+#  Parties
+# -----------------------------------------------------------------------------
+
+ksos:PartyShape
+    a sh:NodeShape ;
+    sh:targetClass kso:Party ;
+    sh:property [
+        sh:path kso:legalName ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:minLength 1 ;
+        sh:message "Every party needs exactly one non-empty legal name." ;
+    ] .
+
+ksos:LegalEntityShape
+    a sh:NodeShape ;
+    sh:targetClass kso:LegalEntity ;
+    sh:property [
+        sh:path kso:incorporatedIn ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class kso:Jurisdiction ;
+        sh:message "A legal entity must be incorporated in exactly one known jurisdiction." ;
+    ] ;
+    sh:property [
+        sh:path kso:leiCode ;
+        sh:maxCount 1 ;
+        sh:pattern "^[A-Z0-9]{18}[0-9]{2}$" ;
+        sh:message "LEI must be 20 characters: 18 alphanumerics + 2 check digits." ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Direct ownership stakes in {$this} sum to {?total}%, which exceeds 100%." ;
+        sh:prefixes ksos:Prefixes ;
+        sh:select """
+            SELECT $this (SUM(?pct) AS ?total)
+            WHERE {
+                ?stake kso:heldIn $this ;
+                       kso:percentage ?pct .
+            }
+            GROUP BY $this
+            HAVING (SUM(?pct) > 100)
+        """ ;
+    ] .
+
+# -----------------------------------------------------------------------------
+#  Ownership
+# -----------------------------------------------------------------------------
+
+ksos:OwnershipStakeShape
+    a sh:NodeShape ;
+    sh:targetClass kso:OwnershipStake ;
+    sh:property [
+        sh:path kso:holder ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class kso:Party ;
+    ] ;
+    sh:property [
+        sh:path kso:heldIn ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class kso:LegalEntity ;
+    ] ;
+    sh:property [
+        sh:path kso:percentage ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:decimal ;
+        sh:minExclusive 0 ;
+        sh:maxInclusive 100 ;
+        sh:message "Stake percentage must be a decimal in (0, 100]." ;
+    ] .
+
+# -----------------------------------------------------------------------------
+#  Jurisdictions — every one must resolve to a UBO threshold
+# -----------------------------------------------------------------------------
+
+ksos:JurisdictionShape
+    a sh:NodeShape ;
+    sh:targetClass kso:Jurisdiction ;
+    sh:property [
+        sh:path kso:isoCountryCode ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:pattern "^[A-Z]{2}$" ;
+    ] ;
+    sh:property [
+        sh:path ( kso:hasFatfStatus kso:uboThresholdPercent ) ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "Jurisdiction must resolve to exactly one UBO threshold via its FATF status." ;
+    ] .
+
+# -----------------------------------------------------------------------------
+#  Customer profiles — the US Master Anchor Mandate
+# -----------------------------------------------------------------------------
+
+ksos:CustomerProfileShape
+    a sh:NodeShape ;
+    sh:targetClass kso:CustomerProfile ;
+    sh:property [ sh:path kso:profileOf ; sh:minCount 1 ; sh:maxCount 1 ; sh:class kso:Party ] ;
+    sh:property [ sh:path kso:bookedIn  ; sh:minCount 1 ; sh:maxCount 1 ; sh:class kso:Jurisdiction ] .
+
+ksos:ForeignExtensionShape
+    a sh:NodeShape ;
+    sh:targetClass kso:ForeignExtension ;
+    sh:property [
+        sh:path kso:extendsMaster ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class kso:MasterProfile ;
+        sh:message "US Master Anchor Mandate: a foreign extension must extend exactly one master profile." ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Foreign extension and its master profile must describe the same party." ;
+        sh:prefixes ksos:Prefixes ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this kso:profileOf ?party ;
+                      kso:extendsMaster ?master .
+                ?master kso:profileOf ?masterParty .
+                FILTER (?party != ?masterParty)
+            }
+        """ ;
+    ] .
+
+# -----------------------------------------------------------------------------
+#  Screening
+# -----------------------------------------------------------------------------
+
+ksos:ScreeningAlertShape
+    a sh:NodeShape ;
+    sh:targetClass kso:ScreeningAlert ;
+    sh:property [ sh:path kso:raisedBy ; sh:minCount 1 ; sh:class kso:ScreeningEvent ] ;
+    sh:property [
+        sh:path kso:matchScore ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ; sh:maxInclusive 1 ;
+    ] ;
+    sh:property [
+        sh:path kso:alertDisposition ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( ksov:AlertPending ksov:FalsePositive ksov:PossibleTrueMatch ) ;
+    ] .
+
+# -----------------------------------------------------------------------------
+#  Governance — dual control and the system lock
+# -----------------------------------------------------------------------------
+
+ksos:EscalationShape
+    a sh:NodeShape ;
+    sh:targetClass kso:Escalation ;
+    sh:property [ sh:path kso:escalatedCase ; sh:minCount 1 ; sh:maxCount 1 ; sh:class kso:Case ] ;
+    sh:property [
+        sh:path kso:escalationTrigger ;
+        sh:minCount 1 ;
+        sh:in ( ksov:SuspectedTrueMatch ksov:UnmitigatedHighRisk ksov:RegulatoryConflict ) ;
+    ] ;
+    sh:property [ sh:path kso:maker   ; sh:minCount 1 ; sh:maxCount 1 ; sh:class kso:NaturalPerson ] ;
+    sh:property [
+        sh:path kso:checker ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class kso:NaturalPerson ;
+        sh:disjoint kso:maker ;
+        sh:message "Four-eyes principle: the checker cannot be the maker." ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "An approved escalation must lock its case (kso:isLocked true)." ;
+        sh:prefixes ksos:Prefixes ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this kso:escalatedCase ?case .
+                FILTER NOT EXISTS { ?case kso:isLocked true }
+            }
+        """ ;
+    ] .
+
+ksos:DispositionShape
+    a sh:NodeShape ;
+    sh:targetClass kso:Disposition ;
+    sh:property [ sh:path kso:disposes ; sh:minCount 1 ; sh:maxCount 1 ; sh:class kso:Escalation ] ;
+    sh:property [
+        sh:path kso:outcome ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( ksov:Decline ksov:ConditionalApproval ksov:Clearance ) ;
+    ] .
+
+# -----------------------------------------------------------------------------
+#  Trade finance
+# -----------------------------------------------------------------------------
+
+ksos:GoodsShape
+    a sh:NodeShape ;
+    sh:targetClass kso:Goods ;
+    sh:property [
+        sh:path kso:hsCode ;
+        sh:minCount 1 ;
+        sh:pattern "^[0-9]{6,10}$" ;
+        sh:message "HS code must be 6–10 digits." ;
+    ] ;
+    sh:property [ sh:path kso:isDualUse ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ] .
+
+ksos:VesselShape
+    a sh:NodeShape ;
+    sh:targetClass kso:Vessel ;
+    sh:property [
+        sh:path kso:imoNumber ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:pattern "^IMO[0-9]{7}$" ;
+    ] .

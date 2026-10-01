@@ -1,0 +1,27 @@
+# CQ1 — Which natural persons directly hold a stake at or above the UBO
+#       threshold that applies to the entity's incorporation jurisdiction?
+#
+# Limitation (deliberate): SPARQL property paths can *traverse* ownership
+# chains but cannot *multiply* percentages along them. Indirect ownership is
+# computed in Python — see src/kso/ownership.py and ADR-0003.
+
+PREFIX kso:  <https://w3id.org/kso/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?entityName ?personName ?percentage ?threshold ?jurisdiction
+WHERE {
+    ?entity a kso:LegalEntity ;
+            kso:legalName ?entityName ;
+            kso:incorporatedIn ?j .
+    ?j skos:prefLabel ?jurisdiction ;
+       kso:hasFatfStatus/kso:uboThresholdPercent ?threshold .
+
+    ?stake kso:heldIn ?entity ;
+           kso:holder ?person ;
+           kso:percentage ?percentage .
+    ?person a kso:NaturalPerson ;
+            kso:legalName ?personName .
+
+    FILTER (?percentage >= ?threshold)
+}
+ORDER BY ?entityName DESC(?percentage)

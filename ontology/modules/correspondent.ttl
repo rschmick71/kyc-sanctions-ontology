@@ -1,0 +1,53 @@
+# =============================================================================
+#  KSO Correspondent Banking — respondent relationships and nesting tiers.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/kso/ontology/correspondent>
+    a owl:Ontology ;
+    dcterms:title "KSO Correspondent Banking"@en ;
+    owl:imports <https://w3id.org/kso/ontology/core> ;
+    owl:versionInfo "0.1.1" .
+
+kso:CorrespondentRelationship
+    a owl:Class ;
+    rdfs:label "Correspondent Relationship"@en ;
+    skos:definition "An account relationship in which a correspondent bank provides services to a respondent bank."@en .
+
+kso:correspondent
+    a owl:ObjectProperty ;
+    rdfs:domain kso:CorrespondentRelationship ;
+    rdfs:range kso:FinancialInstitution ;
+    rdfs:label "correspondent"@en .
+
+kso:respondent
+    a owl:ObjectProperty ;
+    rdfs:domain kso:CorrespondentRelationship ;
+    rdfs:range kso:FinancialInstitution ;
+    rdfs:label "respondent"@en .
+
+kso:nestedUnder
+    a owl:ObjectProperty , owl:TransitiveProperty ;
+    rdfs:domain kso:CorrespondentRelationship ;
+    rdfs:range kso:CorrespondentRelationship ;
+    rdfs:label "nested under"@en ;
+    skos:definition "Links a downstream (nested) relationship to the relationship it accesses the correspondent through. Transitive, so a reasoner can find every tier above a nested bank."@en .
+
+kso:permitsNestedAccess
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:CorrespondentRelationship ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "permits nested access"@en .
+
+kso:cbddqReceivedOn
+    a owl:DatatypeProperty ;
+    rdfs:domain kso:CorrespondentRelationship ;
+    rdfs:range xsd:date ;
+    rdfs:label "CBDDQ received on"@en ;
+    skos:definition "Date the signed Wolfsberg Correspondent Banking Due Diligence Questionnaire was received."@en .

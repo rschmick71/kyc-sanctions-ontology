@@ -1,0 +1,265 @@
+# =============================================================================
+#  KSO Jurisdictions — the 20-jurisdiction matrix as linked data.
+#
+#  Transcribed from docs/architecture/lines-of-defence-operating-model.md, §5.
+#  FATF statuses change several times a year (February / June / October
+#  plenaries). Before relying on a status, verify it against the current FATF
+#  publication and bump dcterms:modified below.
+# =============================================================================
+
+@prefix kso:     <https://w3id.org/kso/ontology#> .
+@prefix ksov:    <https://w3id.org/kso/vocab#> .
+@prefix ksoj:    <https://w3id.org/kso/jurisdiction/> .
+@prefix ksod:    <https://w3id.org/kso/local-document/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+ksoj:JurisdictionScheme a skos:ConceptScheme ;
+    skos:prefLabel "KSO jurisdictions"@en ;
+    dcterms:modified "2026-09-29"^^xsd:date ;
+    skos:scopeNote "FATF status and risk tier are point-in-time assertions from the operating-model matrix; re-verify each FATF plenary."@en .
+
+ksod:LocalDocumentScheme a skos:ConceptScheme ;
+    skos:prefLabel "Local supplemental document types"@en .
+
+# --- United States ---------------------------------------------------------------
+ksoj:US a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "United States"@en ;
+    kso:isoCountryCode "US" ;
+    kso:primaryRegulator "OCC / FinCEN" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLowMedium ;
+    kso:requiresDocument ksod:US-FincenCddForm , ksod:US-StateRegistryCertificate , ksod:US-FormW9 .
+ksod:US-FincenCddForm a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "FinCEN CDD Form"@en .
+ksod:US-StateRegistryCertificate a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "State Registry Certificate"@en .
+ksod:US-FormW9 a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Form W-9"@en .
+
+# --- United Kingdom ---------------------------------------------------------------
+ksoj:GB a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "United Kingdom"@en ;
+    kso:isoCountryCode "GB" ;
+    kso:primaryRegulator "FCA / HM Treasury" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:GB-CompaniesHouseExtract , ksod:GB-PscRegister .
+ksod:GB-CompaniesHouseExtract a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Companies House Extract"@en .
+ksod:GB-PscRegister a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "PSC Register"@en .
+
+# --- Singapore ---------------------------------------------------------------
+ksoj:SG a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Singapore"@en ;
+    kso:isoCountryCode "SG" ;
+    kso:primaryRegulator "MAS" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:SG-AcraBizfileExtract , ksod:SG-LocalResidentDirectorVerification .
+ksod:SG-AcraBizfileExtract a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "ACRA BizFile Extract"@en .
+ksod:SG-LocalResidentDirectorVerification a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Local Resident Director Verification"@en .
+
+# --- Kenya ---------------------------------------------------------------
+ksoj:KE a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Kenya"@en ;
+    kso:isoCountryCode "KE" ;
+    kso:primaryRegulator "CBK" ;
+    kso:hasFatfStatus ksov:FatfIncreasedMonitoring ;
+    kso:hasRiskTier ksov:RiskHigh ;
+    kso:requiresDocument ksod:KE-KraPinCertificate , ksod:KE-FormCr12DirectorsRegistry .
+ksod:KE-KraPinCertificate a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "KRA PIN Certificate"@en .
+ksod:KE-FormCr12DirectorsRegistry a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Form CR12 Directors Registry"@en .
+
+# --- Vietnam ---------------------------------------------------------------
+ksoj:VN a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Vietnam"@en ;
+    kso:isoCountryCode "VN" ;
+    kso:primaryRegulator "SBV" ;
+    kso:hasFatfStatus ksov:FatfIncreasedMonitoring ;
+    kso:hasRiskTier ksov:RiskHigh ;
+    kso:requiresDocument ksod:VN-SbvForeignExchangeApproval , ksod:VN-InvestmentRegistrationCertificate .
+ksod:VN-SbvForeignExchangeApproval a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "SBV Foreign Exchange Approval"@en .
+ksod:VN-InvestmentRegistrationCertificate a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Investment Registration Certificate"@en .
+
+# --- United Arab Emirates ---------------------------------------------------------------
+ksoj:AE a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "United Arab Emirates"@en ;
+    kso:isoCountryCode "AE" ;
+    kso:primaryRegulator "CBUAE" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskMedium ;
+    kso:requiresDocument ksod:AE-DedCommercialLicense , ksod:AE-EmiratesIdForLocalSignatories .
+ksod:AE-DedCommercialLicense a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "DED Commercial License"@en .
+ksod:AE-EmiratesIdForLocalSignatories a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Emirates ID for Local Signatories"@en .
+
+# --- Switzerland ---------------------------------------------------------------
+ksoj:CH a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Switzerland"@en ;
+    kso:isoCountryCode "CH" ;
+    kso:primaryRegulator "FINMA" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:CH-FormABeneficialOwnerDeclaration , ksod:CH-ZefixRegistryExtract .
+ksod:CH-FormABeneficialOwnerDeclaration a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Form A Beneficial Owner Declaration"@en .
+ksod:CH-ZefixRegistryExtract a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Zefix Registry Extract"@en .
+
+# --- Hong Kong ---------------------------------------------------------------
+ksoj:HK a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Hong Kong"@en ;
+    kso:isoCountryCode "HK" ;
+    kso:primaryRegulator "HKMA" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:HK-BusinessRegistrationCertificate , ksod:HK-TcspCertification .
+ksod:HK-BusinessRegistrationCertificate a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Business Registration Certificate"@en .
+ksod:HK-TcspCertification a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "TCSP Certification"@en .
+
+# --- Germany ---------------------------------------------------------------
+ksoj:DE a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Germany"@en ;
+    kso:isoCountryCode "DE" ;
+    kso:primaryRegulator "BaFin" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:DE-TransparenzregisterExtract , ksod:DE-HandelsregisterExtract .
+ksod:DE-TransparenzregisterExtract a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Transparenzregister Extract"@en .
+ksod:DE-HandelsregisterExtract a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Handelsregister Extract"@en .
+
+# --- Brazil ---------------------------------------------------------------
+ksoj:BR a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Brazil"@en ;
+    kso:isoCountryCode "BR" ;
+    kso:primaryRegulator "BACEN" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskMedium ;
+    kso:requiresDocument ksod:BR-CnpjNationalTaxId , ksod:BR-BacenForeignInvestmentRegistration .
+ksod:BR-CnpjNationalTaxId a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "CNPJ National Tax ID"@en .
+ksod:BR-BacenForeignInvestmentRegistration a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "BACEN Foreign Investment Registration"@en .
+
+# --- South Africa ---------------------------------------------------------------
+ksoj:ZA a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "South Africa"@en ;
+    kso:isoCountryCode "ZA" ;
+    kso:primaryRegulator "SARB" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskMedium ;
+    kso:requiresDocument ksod:ZA-CipcRegistrationCertificate , ksod:ZA-SarbExchangeControlApproval .
+ksod:ZA-CipcRegistrationCertificate a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "CIPC Registration Certificate"@en .
+ksod:ZA-SarbExchangeControlApproval a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "SARB Exchange Control Approval"@en .
+
+# --- Australia ---------------------------------------------------------------
+ksoj:AU a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Australia"@en ;
+    kso:isoCountryCode "AU" ;
+    kso:primaryRegulator "AUSTRAC" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:AU-AsicCurrentCompanyExtract , ksod:AU-DirectorIdentityVerification .
+ksod:AU-AsicCurrentCompanyExtract a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "ASIC Current Company Extract"@en .
+ksod:AU-DirectorIdentityVerification a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Director Identity Verification"@en .
+
+# --- India ---------------------------------------------------------------
+ksoj:IN a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "India"@en ;
+    kso:isoCountryCode "IN" ;
+    kso:primaryRegulator "RBI" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskMedium ;
+    kso:requiresDocument ksod:IN-CorporatePanCard , ksod:IN-FemaComplianceAttestation .
+ksod:IN-CorporatePanCard a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Corporate PAN Card"@en .
+ksod:IN-FemaComplianceAttestation a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "FEMA Compliance Attestation"@en .
+
+# --- Japan ---------------------------------------------------------------
+ksoj:JP a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Japan"@en ;
+    kso:isoCountryCode "JP" ;
+    kso:primaryRegulator "JFSA" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:JP-HojinBangouCorporateNumber , ksod:JP-TokiboTohonRegistryCertificate .
+ksod:JP-HojinBangouCorporateNumber a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Hojin Bangou Corporate Number"@en .
+ksod:JP-TokiboTohonRegistryCertificate a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Tokibo Tohon Registry Certificate"@en .
+
+# --- Mexico ---------------------------------------------------------------
+ksoj:MX a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Mexico"@en ;
+    kso:isoCountryCode "MX" ;
+    kso:primaryRegulator "CNBV" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskMediumHigh ;
+    kso:requiresDocument ksod:MX-RfcFederalTaxRegistry , ksod:MX-FielElectronicSignature .
+ksod:MX-RfcFederalTaxRegistry a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "RFC Federal Tax Registry"@en .
+ksod:MX-FielElectronicSignature a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "FIEL Electronic Signature"@en .
+
+# --- Angola ---------------------------------------------------------------
+ksoj:AO a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Angola"@en ;
+    kso:isoCountryCode "AO" ;
+    kso:primaryRegulator "BNA" ;
+    kso:hasFatfStatus ksov:FatfIncreasedMonitoring ;
+    kso:hasRiskTier ksov:RiskHigh ;
+    kso:requiresDocument ksod:AO-BnaCapitalImportationLicense , ksod:AO-DarRevenueCollectionReceipt .
+ksod:AO-BnaCapitalImportationLicense a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "BNA Capital Importation License"@en .
+ksod:AO-DarRevenueCollectionReceipt a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "DAR Revenue Collection Receipt"@en .
+
+# --- Canada ---------------------------------------------------------------
+ksoj:CA a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Canada"@en ;
+    kso:isoCountryCode "CA" ;
+    kso:primaryRegulator "FINTRAC" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:CA-ProvincialCorporateRegistryProfile , ksod:CA-ArticlesOfAmendment .
+ksod:CA-ProvincialCorporateRegistryProfile a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Provincial Corporate Registry Profile"@en .
+ksod:CA-ArticlesOfAmendment a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Articles of Amendment"@en .
+
+# --- France ---------------------------------------------------------------
+ksoj:FR a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "France"@en ;
+    kso:isoCountryCode "FR" ;
+    kso:primaryRegulator "ACPR" ;
+    kso:hasFatfStatus ksov:FatfStandard ;
+    kso:hasRiskTier ksov:RiskLow ;
+    kso:requiresDocument ksod:FR-KbisExtract , ksod:FR-RbeBeneficialOwnershipFiling .
+ksod:FR-KbisExtract a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Kbis Extract"@en .
+ksod:FR-RbeBeneficialOwnershipFiling a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "RBE Beneficial Ownership Filing"@en .
+
+# --- Bolivia ---------------------------------------------------------------
+ksoj:BO a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Bolivia"@en ;
+    kso:isoCountryCode "BO" ;
+    kso:primaryRegulator "ASFI" ;
+    kso:hasFatfStatus ksov:FatfIncreasedMonitoring ;
+    kso:hasRiskTier ksov:RiskHigh ;
+    kso:requiresDocument ksod:BO-NitTaxId , ksod:BO-CommercialRegistryCertificate .
+ksod:BO-NitTaxId a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "NIT Tax ID"@en .
+ksod:BO-CommercialRegistryCertificate a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Commercial Registry Certificate"@en .
+
+# --- Iraq ---------------------------------------------------------------
+ksoj:IQ a kso:Jurisdiction , skos:Concept ;
+    skos:inScheme ksoj:JurisdictionScheme ;
+    skos:prefLabel "Iraq"@en ;
+    kso:isoCountryCode "IQ" ;
+    kso:primaryRegulator "CBI" ;
+    kso:hasFatfStatus ksov:FatfIncreasedMonitoring ;
+    kso:hasRiskTier ksov:RiskHigh ;
+    kso:requiresDocument ksod:IQ-CentralBankAmlApproval , ksod:IQ-MinistryOfTradeCorporateRegistration .
+ksod:IQ-CentralBankAmlApproval a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Central Bank AML Approval"@en .
+ksod:IQ-MinistryOfTradeCorporateRegistration a skos:Concept ; skos:inScheme ksod:LocalDocumentScheme ; skos:prefLabel "Ministry of Trade Corporate Registration"@en .
